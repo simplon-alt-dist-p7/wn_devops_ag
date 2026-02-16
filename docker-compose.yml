@@ -1,46 +1,67 @@
 services:
+# ------------ Reader Back ------------
   reader-back:
     build: ./wn-falcon-reader/server
     ports:
-      - "3001:3001"
+      - "${READER_BACK_PORT}:3001"
     restart: always
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_NAME}
     depends_on:
       db:
         condition: service_healthy
 
+# ------------ Reader Front ------------
   reader-front:
     build: ./wn-falcon-reader/client
     ports:
-      - "8081:80"
+      - "${READER_FRONT_PORT}:80"
+    environment:
+      - VITE_API_URL=http://localhost:${READER_BACK_PORT}
 
+# ------------ Writer Back ------------
   writer-back:
     build: ./wn-falcon-writer/server
     ports:
-      - "3002:3002"
+      - "${WRITER_BACK_PORT}:3002"
     restart: always
+    environment:
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_NAME}
     depends_on:
       db:
         condition: service_healthy
 
+# ------------ Writer Front ------------
   writer-front:
     build: ./wn-falcon-writer/client
     ports:
-      - "8080:80"
+      - "${WRITER_FRONT_PORT}:80"
+    environment:
+      - VITE_API_URL=http://localhost:${WRITER_BACK_PORT}
 
+# ------------ Database ------------
   db:
     image: postgres:15-alpine
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: arno123
-      POSTGRES_DB: wn_db
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
       - ./init-db:/docker-entrypoint-initdb.d
 
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d wn_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 5s
       timeout: 5s
       retries: 10

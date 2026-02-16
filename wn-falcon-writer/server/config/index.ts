@@ -8,7 +8,7 @@ import cors from "cors";
 const app = express();
 app.use(cors());
 
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 300;
 
 app.use(express.json());
 
@@ -25,4 +25,4 @@ AppDataSource.initialize()
     console.log("📂 Database connected with TypeORM");
     app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
   })
-  .catch((error) => console.log("❌ Database error:", error));
+  .catch((error: any) => console.log("❌ Database error:", error));
