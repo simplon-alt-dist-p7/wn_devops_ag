@@ -1,0 +1,49 @@
+services:
+  reader-back:
+    build: ./wn-falcon-reader/server
+    ports:
+      - "3001:3001"
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+
+  reader-front:
+    build: ./wn-falcon-reader/client
+    ports:
+      - "8081:80"
+
+  writer-back:
+    build: ./wn-falcon-writer/server
+    ports:
+      - "3002:3002"
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+
+  writer-front:
+    build: ./wn-falcon-writer/client
+    ports:
+      - "8080:80"
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: arno123
+      POSTGRES_DB: wn_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d wn_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  db-data:
