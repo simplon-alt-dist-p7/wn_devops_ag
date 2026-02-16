@@ -19,6 +19,7 @@ The application is divided into 5 autonomous services, each isolated within its 
 ## 🚀 Quick Start (Docker Compose)
 
 The project strictly adheres to the single-command launch requirement. The entire environment (database, APIs, and Frontends) initializes automatically.
+You need to have Docker Desktop installed.
 Bash
 
 ### From the monorepo root
@@ -59,6 +60,7 @@ The docker-compose.yml file centralizes the infrastructure. It manages:
 
 ## 🗃️ Monorepo Structure
 
+```
 world-news/
 ├── docker-compose.yml # Infrastructure orchestrator
 ├── init-db/ # SQL initialization scripts
@@ -69,3 +71,4 @@ world-news/
 └── wn-falcon-writer/ # Writer Micro-app
 ├── client/ # Frontend + Dockerfile
 └── server/ # Backend + Dockerfile
+```
