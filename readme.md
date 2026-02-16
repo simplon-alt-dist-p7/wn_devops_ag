@@ -20,7 +20,6 @@ The application is divided into 5 autonomous services, each isolated within its 
 
 The project strictly adheres to the single-command launch requirement. The entire environment (database, APIs, and Frontends) initializes automatically.
 You need to have Docker Desktop installed.
-Bash
 
 ### From the monorepo root
 
@@ -66,9 +65,9 @@ world-news/
 ├── init-db/ # SQL initialization scripts
 ├── .gitignore # Global Git exclusion config
 ├── wn-falcon-reader/ # Reader Micro-app
-│ ├── client/ # Frontend + Dockerfile
-│ └── server/ # Backend + Dockerfile
+│   ├── client/ # Frontend + Dockerfile
+│   └── server/ # Backend + Dockerfile
 └── wn-falcon-writer/ # Writer Micro-app
-├── client/ # Frontend + Dockerfile
-└── server/ # Backend + Dockerfile
+    ├── client/ # Frontend + Dockerfile
+    └── server/ # Backend + Dockerfile
 ```
