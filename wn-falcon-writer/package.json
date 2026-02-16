@@ -1,0 +1,23 @@
+{
+  "name": "wn-falcon-reader",
+  "version": "1.0.0",
+  "description": "World News Falcon Reader - Client & Server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "client": "npm --prefix client run dev",
+    "server": "npm --prefix server run dev",
+    "dev": "concurrently -n \"CLIENT,SERVER\" -c \"blue,green\" \"npm run client\" \"npm run server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simplon-alt-dist-p7/wn-falcon-reader.git"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  }
+}

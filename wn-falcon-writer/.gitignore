@@ -1,0 +1,46 @@
+##################################
+Système d'exploitation
+##################################
+macOS
+.DS_Store
+
+Windows
+Thumbs.db
+Desktop.ini
+
+Linux
+*~
+
+##################################
+Éditeurs / IDE
+##################################
+VS Code
+.vscode/
+!.vscode/extensions.json
+
+JetBrains (IntelliJ, PyCharm, WebStorm…)
+.idea/
+
+Vim
+*.swp
+*.swo
+
+##################################
+Dépendances
+##################################
+Node.js
+node_modules/
+/generated/prisma
+
+##################################
+Logs
+##################################
+.log
+logs/
+
+##################################
+Environnement & secrets
+##################################
+.env
+.env.
+!.env.example
