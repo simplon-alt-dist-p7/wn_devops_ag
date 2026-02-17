@@ -1,14 +1,31 @@
 {
   "name": "world-news",
   "version": "1.0.0",
-  "description": "This project represents the individual technical validation phase. The objective is to assemble, containerize, and automate a complete architecture consisting of two distinct micro-apps: Reader and Writer.",
+  "description": "...",
   "main": "index.js",
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "prepare": "husky",
+    "test:all": "npm run test --prefix wn-falcon-reader/server && npm run test --prefix wn-falcon-reader/client && npm run test --prefix wn-falcon-writer/server && npm run test --prefix wn-falcon-writer/client",
+    "lint:all": "npm run lint --prefix wn-falcon-reader/server && npm run lint --prefix wn-falcon-reader/client && npm run lint --prefix wn-falcon-writer/server && npm run lint --prefix wn-falcon-writer/client"
+  },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
-    "@types/node": "^25.2.3"
+    "@types/node": "^25.2.3",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.1"
+  },
+  "lint-staged": {
+    "wn-falcon-reader/**/*.{ts,tsx,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "wn-falcon-writer/**/*.{ts,tsx,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml}": [
+      "prettier --write"
+    ]
   }
 }
