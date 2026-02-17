@@ -48,6 +48,16 @@ export const getArticleById = async (req: Request, res: Response) => {
  * POST /articles
  */
 export const createArticle = async (req: Request, res: Response) => {
+  if (
+    !req.body.title ||
+    !req.body.subtitle ||
+    !req.body.summary ||
+    !req.body.content
+  ) {
+    return res
+      .status(400)
+      .json({ error: "Données invalides : champs obligatoires manquants." });
+  }
   try {
     const savedArticle = await createOneArticle(req.body);
     return res.status(201).json(savedArticle);
