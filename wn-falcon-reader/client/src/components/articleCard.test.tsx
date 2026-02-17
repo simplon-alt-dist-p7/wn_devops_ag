@@ -45,6 +45,7 @@ describe("ArticleCard Component", () => {
     expect(link).toHaveAttribute("href", "/articles/1");
   });
 
+  // ----- Date formatting test -----
   it("affiche la date formatée correctement en français", () => {
     render(
       <BrowserRouter>
