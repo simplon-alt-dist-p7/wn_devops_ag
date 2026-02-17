@@ -7,7 +7,7 @@ async function start() {
     await AppDataSource.initialize();
     console.log("✅ Database connected with TypeORM.");
 
-    const port = Number(process.env.SERVER_PORT ?? process.env.PORT ?? 3001);
+    const port = Number(process.env.WRITER_BACK_PORT);
 
     app.listen(port, () => {
       console.log(`🚀 Server is running on port ${port}`);

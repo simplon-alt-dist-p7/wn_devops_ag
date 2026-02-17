@@ -3,7 +3,7 @@ import { AppDataSource } from "./config/data-source.js";
 import { startListener } from "./service/listener.js";
 import app from "./app.js";
 
-const port = Number(process.env.SERVER_PORT ?? 3001);
+const port = Number(process.env.READER_BACK_PORT);
 
 async function start() {
   try {

@@ -4,9 +4,6 @@ import articleRoute from "./route/articleRoute.js";
 import categoryRoute from "./route/categoryRoute.js";
 import commentRoute from "./route/commentRoute.js";
 import favoriteRoute from "./route/favoriteRoute.js";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 const app = express();
 

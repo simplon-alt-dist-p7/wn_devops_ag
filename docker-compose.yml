@@ -1,21 +1,23 @@
 services:
-# ------------ Reader Back ------------
+  # ------------ Reader Back ------------
   reader-back:
     build: ./wn-falcon-reader/server
+    env_file: .env
     ports:
-      - "${READER_BACK_PORT}:3001"
+      - "${READER_BACK_PORT}:${READER_BACK_PORT}"
     restart: always
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
-      - DB_USERNAME=${DB_USER}
+      - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_DATABASE=${DB_NAME}
+      - DB_NAME=${DB_NAME}
+      - PORT=${READER_BACK_PORT}
     depends_on:
       db:
         condition: service_healthy
 
-# ------------ Reader Front ------------
+  # ------------ Reader Front ------------
   reader-front:
     build: ./wn-falcon-reader/client
     ports:
@@ -23,23 +25,25 @@ services:
     environment:
       - VITE_API_URL=http://localhost:${READER_BACK_PORT}
 
-# ------------ Writer Back ------------
+  # ------------ Writer Back ------------
   writer-back:
     build: ./wn-falcon-writer/server
+    env_file: .env
     ports:
-      - "${WRITER_BACK_PORT}:3002"
+      - "${WRITER_BACK_PORT}:${WRITER_BACK_PORT}"
     restart: always
     environment:
       - DB_HOST=${DB_HOST}
       - DB_PORT=${DB_PORT}
-      - DB_USERNAME=${DB_USER}
+      - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
-      - DB_DATABASE=${DB_NAME}
+      - DB_NAME=${DB_NAME}
+      - PORT=${WRITER_BACK_PORT}
     depends_on:
       db:
         condition: service_healthy
 
-# ------------ Writer Front ------------
+  # ------------ Writer Front ------------
   writer-front:
     build: ./wn-falcon-writer/client
     ports:
@@ -47,7 +51,7 @@ services:
     environment:
       - VITE_API_URL=http://localhost:${WRITER_BACK_PORT}
 
-# ------------ Database ------------
+  # ------------ Database ------------
   db:
     image: postgres:15-alpine
     environment:
