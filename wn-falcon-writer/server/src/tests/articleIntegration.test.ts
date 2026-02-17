@@ -54,6 +54,7 @@ vi.mock("../config/data-source.js", () => ({
 }));
 
 import app from "../app.js";
+
 // ----- GetAll should success -----
 describe("Articles API Integration Tests", () => {
   it("should return 200 and a list of articles", async () => {
