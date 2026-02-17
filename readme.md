@@ -61,13 +61,46 @@ The docker-compose.yml file centralizes the infrastructure. It manages:
 
 ```
 world-news/
-├── docker-compose.yml # Infrastructure orchestrator
-├── init-db/ # SQL initialization scripts
-├── .gitignore # Global Git exclusion config
-├── wn-falcon-reader/ # Reader Micro-app
-│   ├── client/ # Frontend + Dockerfile
-│   └── server/ # Backend + Dockerfile
-└── wn-falcon-writer/ # Writer Micro-app
-    ├── client/ # Frontend + Dockerfile
-    └── server/ # Backend + Dockerfile
+├── docker-compose.yml    # Infrastructure orchestrator
+├── playwright.config.ts  # E2E test configuration
+├── tests/                # Playwright E2E test suite
+├── init-db/              # SQL initialization scripts
+├── wn-falcon-reader/     # Reader Micro-app
+│   ├── client/           # Frontend (React + Vitest)
+│   └── server/           # Backend (Express + Supertest)
+└── wn-falcon-writer/     # Writer Micro-app
+    ├── client/           # Frontend (React + Vitest)
+    └── server/           # Backend (Express + Supertest)
 ```
+
+## 🧪 Tests
+
+The project implements somes tests to ensure reliability across all layers :
+
+### End-to-End (E2E) - Playwright
+
+Located at the root, these tests validate the complete user workflow between microservices.
+
+    Workflow: Creates an article via the Writer Dashboard (8080) and verifies its immediate availability on the Reader Portal (8081).
+
+    Run: npx playwright test
+    With UI interface : npx playwright test --ui
+
+### Backend Integration Tests - Vitest & Supertest
+
+Located in the server/ directories of each micro-app.
+
+    Scope: Validates API endpoints, database interactions (TypeORM), and business logic (Article for writer and Comment for reader).
+
+    Run inside server folders : npm test
+
+### Frontend Unit Tests - Vitest & React Testing Library
+
+Located in the client/ directories.
+
+    Scope: Ensures UI components render correctly and handle user events as expected.
+
+    For writer : client/src/components/articleForm
+    For reader : client/src/components/articleCard
+
+    Run inside client folders : npm test
