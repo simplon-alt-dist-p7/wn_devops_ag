@@ -22,7 +22,10 @@ export default function ArticleCard({ article }: ArticleProps) {
   return (
     <Link to={`/articles/${article.id}`}>
       <div className="bg-secondary rounded-xl shadow-md p-6 hover:shadow-lg transition h-[12rem] min-w-[270px] flex flex-col justify-around gap-3 sm:text-sm lg:text-lg max-w-full sm:max-w-[370px] mx-auto relative group">
-        <ToggleFavorite articleId={article.id} initialIsFavorite={article.is_favorite} />
+        <ToggleFavorite
+          articleId={article.id}
+          initialIsFavorite={article.is_favorite}
+        />
         <div>
           <CategoryBadge category={article.category_name} />
           <h1 className="text-tertiary font-bold line-clamp-1 mt-2">

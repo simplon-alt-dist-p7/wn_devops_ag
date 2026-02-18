@@ -5,12 +5,12 @@ import app from "./app.js";
 async function start() {
   try {
     await AppDataSource.initialize();
-    console.log("✅ Database connected with TypeORM.");
+    console.info("✅ Database connected with TypeORM.");
 
     const port = Number(process.env.WRITER_BACK_PORT);
 
     app.listen(port, () => {
-      console.log(`🚀 Server is running on port ${port}`);
+      console.info(`🚀 Server is running on port ${port}`);
     });
   } catch (error) {
     console.error("❌ Database error:", error);

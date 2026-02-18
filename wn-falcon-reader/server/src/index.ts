@@ -8,12 +8,12 @@ const port = Number(process.env.READER_BACK_PORT);
 async function start() {
   try {
     await AppDataSource.initialize();
-    console.log("✅ Connection has been established successfully (TypeORM).");
+    console.info("✅ Connection has been established successfully (TypeORM).");
 
     startListener();
-    console.log("👂ready to listen for event");
+    console.info("👂ready to listen for event");
     app.listen(port, () => {
-      console.log(`🚀 Server is running on port ${port}`);
+      console.info(`🚀 Server is running on port ${port}`);
     });
   } catch (error) {
     console.error("❌ Unable to connect to the database:", error);
