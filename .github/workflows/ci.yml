@@ -39,8 +39,8 @@ jobs:
           npm install --prefix wn-falcon-writer/server
           npm install --prefix wn-falcon-writer/client
 
-      - name: Initialize Databse Schema
-        run: docker exec -i $(docker ps -qf name=postgres) psql -U postgres -d wn_db < ./init-db/init_db.sql
+      - name: Initialize Database Schema
+        run: docker exec -i $(docker ps -qf name=postgres) psql -U postgres -d wn_db < ./init-db/1_init_db.sql
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
