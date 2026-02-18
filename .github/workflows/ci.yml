@@ -12,9 +12,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: user
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: world_news_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: arno123
+          POSTGRES_DB: wn_db
         ports:
           - 5432:5432
         options: >-
@@ -39,6 +39,9 @@ jobs:
           npm install --prefix wn-falcon-writer/server
           npm install --prefix wn-falcon-writer/client
 
+      - name: Initialize Databse Schema
+        run: docker exec -i $(docker ps -qf name=postgres) psql -U postgres -d wn_db < ./init-db/init_db.sql
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
@@ -49,9 +52,9 @@ jobs:
         env:
           DB_HOST: localhost
           DB_PORT: 5432
-          DB_USER: user
-          DB_PASSWORD: password
-          DB_NAME: world_news_test
+          DB_USER: postgres
+          DB_PASSWORD: arno123
+          DB_NAME: wn_db
           READER_BACK_PORT: 3001
           WRITER_BACK_PORT: 3002
         run: npm run test:all
@@ -60,9 +63,9 @@ jobs:
         env:
           DB_HOST: localhost
           DB_PORT: 5432
-          DB_USER: user
-          DB_PASSWORD: password
-          DB_NAME: world_news_test
+          DB_USER: postgres
+          DB_PASSWORD: arno123
+          DB_NAME: wn_db
           READER_BACK_PORT: 3001
           WRITER_BACK_PORT: 3002
           READER_FRONT_PORT: 8081

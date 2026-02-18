@@ -74,7 +74,7 @@ export default defineConfig({
   webServer: [
     {
       command: "npm run start:all",
-      url: "http://localhost:8080",
+      url: "http://localhost:3002/categories",
       reuseExistingServer: !process.env.CI,
       timeout: 180000,
     },
