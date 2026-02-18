@@ -39,6 +39,9 @@ jobs:
           npm install --prefix wn-falcon-writer/server
           npm install --prefix wn-falcon-writer/client
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
       - name: Run Linter
         run: npm run lint:all
 
