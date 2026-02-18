@@ -74,13 +74,7 @@ export default defineConfig({
   webServer: [
     {
       command: "npm run start:all",
-      url: "http://localhost:8081", // Reader client
-      reuseExistingServer: !process.env.CI,
-      timeout: 180000,
-    },
-    {
-      command: "npm run start:all",
-      url: "http://localhost:8080", // Writer client
+      url: "http://localhost:8080",
       reuseExistingServer: !process.env.CI,
       timeout: 180000,
     },
