@@ -22,7 +22,7 @@ describe("ArticleCard Component", () => {
   it("affiche le titre, sous-titre et la catégorie présents sur la carte", () => {
     render(
       <BrowserRouter>
-        <ArticleCard article={mockArticle as any} />
+        <ArticleCard article={mockArticle} />
       </BrowserRouter>,
     );
 
@@ -37,7 +37,7 @@ describe("ArticleCard Component", () => {
   it("contient un lien correct vers le détail de l'article", () => {
     render(
       <BrowserRouter>
-        <ArticleCard article={mockArticle as any} />
+        <ArticleCard article={mockArticle} />
       </BrowserRouter>,
     );
 
@@ -49,7 +49,7 @@ describe("ArticleCard Component", () => {
   it("affiche la date formatée correctement en français", () => {
     render(
       <BrowserRouter>
-        <ArticleCard article={mockArticle as any} />
+        <ArticleCard article={mockArticle} />
       </BrowserRouter>,
     );
 

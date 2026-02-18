@@ -1,9 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, UpdateDateColumn } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from "typeorm";
 import { Category } from "./category.js";
 
 @Entity({ schema: "writer", name: "t_articles" })
 export class Article {
-  @PrimaryGeneratedColumn({ name: "id_article"})
+  @PrimaryGeneratedColumn({ name: "id_article" })
   id!: number;
 
   @Column({ type: "varchar", length: 300, unique: true })
@@ -24,7 +30,7 @@ export class Article {
   })
   deleted_at!: Date | null;
 
-  @Column({type: "timestamp", nullable: true})
+  @Column({ type: "timestamp", nullable: true })
   updated_at!: Date | null;
 
   @Column({ type: "varchar", length: 1000 })
@@ -33,11 +39,10 @@ export class Article {
   @Column({ type: "varchar", length: 10000 })
   content!: string;
 
-  @ManyToOne(() => Category, category => category.articles, {
+  @ManyToOne(() => Category, (category) => category.articles, {
     nullable: false,
-    onDelete: "CASCADE"
+    onDelete: "CASCADE",
   })
-
   @JoinColumn({ name: "id_category" })
   category!: Partial<Category>;
 

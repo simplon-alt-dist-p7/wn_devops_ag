@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "...",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "prepare": "husky",
     "start:all": "concurrently -n \"READER,WRITER\" -c \"blue,magenta\" \"npm run dev --prefix wn-falcon-reader\" \"npm run dev --prefix wn-falcon-writer\"",

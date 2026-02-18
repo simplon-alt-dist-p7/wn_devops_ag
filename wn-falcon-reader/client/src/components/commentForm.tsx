@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { postComment } from "../services/comments";
+import type { Comment } from "../types/comment";
 
 interface CommentFormProps {
   articleId: number;
-  onCommentAdded: (newComment: any) => void;
+  onCommentAdded: (newComment: Comment) => void;
   onCancel: () => void;
   primaryButtonClass: string;
 }

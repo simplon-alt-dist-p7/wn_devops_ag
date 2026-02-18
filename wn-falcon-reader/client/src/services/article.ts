@@ -11,7 +11,6 @@ export const getArticles = async ({ category, page, limit }: ArticlesProps) => {
     if (category) params.append("category", category);
 
     const url = `${API_URL}/articles?${params.toString()}`;
-    console.log(url);
     const response = await fetch(url);
 
     if (!response.ok) {
@@ -39,7 +38,9 @@ export async function fetchArticleById(id: number): Promise<Article> {
     try {
       const data = await res.json();
       message = data?.error ?? message;
-    } catch {}
+    } catch {
+      // On ignore l'erreur de parsing JSON pour garder le message HTTP par défaut
+    }
     throw new Error(message);
   }
 

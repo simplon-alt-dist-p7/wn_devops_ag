@@ -88,8 +88,7 @@ export default function ArticlePage() {
 
   return (
     <>
-      <header className="mb-10">
-      </header>
+      <header className="mb-10"></header>
       <main className={`${pageClass} py-12 px-4`}>
         <div className="max-w-3xl mx-auto">
           <div className="mb-6">
@@ -102,7 +101,10 @@ export default function ArticlePage() {
           </div>
 
           <article className="relative bg-white/90 border border-black/10 rounded-2xl shadow-sm p-8 text-primary">
-            <ToggleFavorite articleId={article.id} initialIsFavorite={article.is_favorite} />
+            <ToggleFavorite
+              articleId={article.id}
+              initialIsFavorite={article.is_favorite}
+            />
             <CategoryBadge category={article.category_name} />
             <h1 className="text-3xl sm:text-4xl font-bold leading-tight text-tertiary mt-6">
               {article.title}
