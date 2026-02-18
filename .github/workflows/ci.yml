@@ -1,0 +1,67 @@
+name: CI World News
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: world_news_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install all dependencies
+        run: |
+          npm install
+          npm install --prefix wn-falcon-reader/server
+          npm install --prefix wn-falcon-reader/client
+          npm install --prefix wn-falcon-writer/server
+          npm install --prefix wn-falcon-writer/client
+
+      - name: Run Linter
+        run: npm run lint:all
+
+      - name: Run unit & integration tests (Vitest)
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: user
+          DB_PASSWORD: password
+          DB_NAME: world_news_test
+          READER_BACK_PORT: 3001
+          WRITER_BACK_PORT: 3002
+        run: npm run test:all
+
+      - name: Run E2E tests (Playwright)
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: user
+          DB_PASSWORD: password
+          DB_NAME: world_news_test
+          READER_BACK_PORT: 3001
+          WRITER_BACK_PORT: 3002
+          READER_FRONT_PORT: 8081
+          WRITER_FRONT_PORT: 8080
+        run: npx playwright test
