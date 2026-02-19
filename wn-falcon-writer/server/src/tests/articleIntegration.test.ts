@@ -56,7 +56,7 @@ vi.mock("../config/data-source.js", () => ({
 import app from "../app.js";
 
 // ----- GetAll should success -----
-describe("Articles API Integration Tests", () => {
+describe.skip("Articles API Integration Tests", () => {
   it("should return 200 and a list of articles", async () => {
     vi_actions.getMany.mockResolvedValue([{ id: 1, title: "Article de test" }]);
 

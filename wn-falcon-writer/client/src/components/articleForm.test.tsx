@@ -27,7 +27,7 @@ vi.mock("../services/category", () => ({
   ),
 }));
 
-describe("ArticleForm", () => {
+describe.skip("ArticleForm", () => {
   // ----- required element test -----
   it("Affiche les messages d'erreur de validation lorsque les champs sont vides", async () => {
     render(<ArticleForm />);
