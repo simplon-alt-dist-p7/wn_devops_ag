@@ -10,7 +10,15 @@ import { Favorite } from "../entity/Favorite.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+const isTest = process.env.NODE_ENV === "test";
+const envFile = isTest ? ".env.test" : ".env";
+
+const localPath = path.resolve(__dirname, "../../", envFile);
+// We use localPath if we want to run locally, and rootPath if we run in Docker
+const rootPath = path.resolve(__dirname, "../../../../", envFile);
+
+dotenv.config({ path: rootPath });
+dotenv.config({ path: localPath });
 
 export const AppDataSource = new DataSource({
   type: "postgres",
