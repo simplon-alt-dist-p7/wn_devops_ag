@@ -1,186 +1,152 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, beforeAll, beforeEach } from "vitest";
 import request from "supertest";
-import { AppDataSource } from "../config/data-source.js";
-import { Article } from "../entity/article.js";
-
-const { vi_actions } = vi.hoisted(() => ({
-  vi_actions: {
-    findOne: vi.fn(),
-    getMany: vi.fn(),
-  },
-}));
-// vi.mock intercepts any import of the data-source.js file and replaces it with our custom implementation defined in the callback function.
-vi.mock("../config/data-source.js", () => ({
-  AppDataSource: {
-    // Simulates the DB connection (always returns "success" to avoid blocking tests)
-    initialize: vi.fn().mockResolvedValue(true),
-
-    // Simulates the getRepository(Article) method
-    getRepository: vi.fn().mockReturnValue({
-      /* --- READ OPERATIONS (GET) --- */
-      // These methods simulate the "QueryBuilder" (e.g., SELECT * FROM articles...)
-      createQueryBuilder: vi.fn().mockReturnThis(),
-      leftJoinAndSelect: vi.fn().mockReturnThis(),
-      orderBy: vi.fn().mockReturnThis(),
-      addOrderBy: vi.fn().mockReturnThis(),
-      take: vi.fn().mockReturnThis(),
-
-      // We link the final result to our external vi_actions (findOne / getMany)
-
-      getMany: vi_actions.getMany,
-      findOne: vi_actions.findOne,
-      findOneBy: vi_actions.findOne,
-
-      /* --- WRITE OPERATIONS (POST / PATCH / DELETE) --- */
-      // create() takes a raw object and turns it into an Entity
-      create: vi.fn().mockImplementation((d) => d),
-
-      // save() simulates database persistence.
-      // We return the sent object (d) and append a fake ID (id: 1) to simulate the DB auto-increment
-      save: vi.fn().mockImplementation((d) => Promise.resolve({ id: 1, ...d })),
-
-      // merge() overlays new values onto an existing article object (used for PATCH)
-      // Object.assign(dest, src) copies properties from the source to the destination
-      merge: vi
-        .fn()
-        .mockImplementation((dest, src) => Object.assign(dest, src)),
-
-      // update() and delete() simulate actions affecting table rows
-      // "affected: 1" tells the service that one row was successfully modified/deleted
-      update: vi.fn().mockResolvedValue({ affected: 1 }),
-      delete: vi.fn().mockResolvedValue({ affected: 1 }),
-    }),
-  },
-}));
-
 import app from "../app.js";
+import { AppDataSource } from "../config/data-source.js";
+import { pool } from "./setup.js";
 
-// ----- GetAll should success -----
-describe.skip("Articles API Integration Tests", () => {
-  it("should return 200 and a list of articles", async () => {
-    vi_actions.getMany.mockResolvedValue([{ id: 1, title: "Article de test" }]);
+describe("Articles Integration", () => {
+  let firstArticleId: number;
+  let secondArticleId: number;
 
-    const response = await request(app).get("/articles");
-    expect(response.status).toBe(200);
-    expect(response.body[0].title).toBe("Article de test");
+  // We wait for the DataSource to initialize before running any tests
+  beforeAll(async () => {
+    if (!AppDataSource.isInitialized) {
+      await AppDataSource.initialize();
+    }
   });
 
-  // ----- GetById should success -----
-  it("should return 200 if article exists", async () => {
-    vi_actions.findOne.mockResolvedValue({ id: 1, title: "Article Unique" });
+  // We reset the database before each test
+  beforeEach(async () => {
+    await pool.query("TRUNCATE writer.t_articles RESTART IDENTITY CASCADE");
 
-    const response = await request(app).get("/articles/1");
-    expect(response.status).toBe(200);
-    expect(response.body.id).toBe(1);
+    const firstArticle = await pool.query(
+      `INSERT INTO writer.t_articles (title, subtitle, summary, content, id_category) 
+       VALUES ($1, $2, $3, $4, $5) 
+       RETURNING id_article`,
+      [
+        "Les chats",
+        "Ils veulent dominer les humains",
+        "C'est un article sur les chats",
+        "L'objectif secret des chats est de dominer les humains et la domination de la terre",
+        1,
+      ],
+    );
+
+    const secondArticle = await pool.query(
+      `INSERT INTO writer.t_articles (title, subtitle, summary, content, id_category) 
+       VALUES ($1, $2, $3, $4, $5) 
+       RETURNING id_article`,
+      [
+        "Les chiens",
+        "Ils sont fidèles aux humains",
+        "C'est un article sur les chiens",
+        "Les chiens sont des animaux de compagnie très fidèles, souvent considérés comme les meilleurs amis de l'homme. Ils offrent une compagnie inestimable et sont connus pour leur loyauté envers leurs propriétaires.",
+        2,
+      ],
+    );
+
+    firstArticleId = firstArticle.rows[0].id_article;
+    secondArticleId = secondArticle.rows[0].id_article;
   });
 
-  // ----- GetById should fail -----
-  it("should return 404 if article is missing", async () => {
-    vi_actions.findOne.mockResolvedValue(null);
+  describe("Articles API Integration Tests", () => {
+    // ----- GetAll should success -----
+    it("should return 200 and a list of articles", async () => {
+      const response = await request(app).get("/articles");
+      expect(response.status).toBe(200);
+      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body.length).toBe(2);
+      expect(response.body[0].title).toBe("Les chiens"); // articles are ordered by last published first
+      expect(response.body[1].title).toBe("Les chats");
+    });
 
-    const response = await request(app).get("/articles/999");
-    expect(response.status).toBe(404);
-  });
+    // ----- GetArticleById should success -----
+    it("should return 200 and the article with id 1", async () => {
+      const response = await request(app).get(`/articles/${firstArticleId}`);
+      expect(response.status).toBe(200);
+      expect(response.body.id).toBe(1);
+      expect(response.body.title).toBe("Les chats");
+    });
 
-  // ----- Post should should fail -----
-  it("should return 400 if a creation field (title) is missing", async () => {
-    const incompleteArticle = {
-      subtitle: "Un petit sous-titre",
-      summary: "Un petit résumé",
-      content: "Le contenu complet",
-    };
+    // ----- Post should success -----
+    it("should return 201 when creating a new article", async () => {
+      const newArticle = {
+        title: "Nouvel Article",
+        subtitle: "Un petit sous-titre",
+        summary: "Un petit résumé",
+        content: "Le contenu complet",
+        category: { id: 1 },
+      };
 
-    const response = await request(app)
-      .post("/articles")
-      .send(incompleteArticle);
+      const response = await request(app).post("/articles").send(newArticle);
 
-    expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty("message");
-  });
-
-  // ----- Post should Success -----
-  it("should return 201 when creating a new article", async () => {
-    const newArticle = {
-      title: "Nouvel Article",
-      subtitle: "Un petit sous-titre",
-      summary: "Un petit résumé",
-      content: "Le contenu complet",
-      category: { id: 1 },
-    };
-
-    const response = await request(app).post("/articles").send(newArticle);
-
-    expect(response.status).toBe(201);
-  });
-
-  // ----- Patch should Success -----
-  it("should return 200 when updating an existing article", async () => {
-    vi_actions.findOne.mockResolvedValue({ id: 1, title: "Ancien Titre" });
-
-    const response = await request(app)
-      .patch("/articles/1")
-      .send({
-        id: 1,
-        title: "Nouveau Titre",
-        subtitle: "Sous-titre inchangé",
-        summary: "Résumé inchangé",
-        content: "Contenu inchangé",
+      expect(response.status).toBe(201);
+      expect(response.body).toMatchObject({
+        title: "Nouvel Article",
+        subtitle: "Un petit sous-titre",
+        summary: "Un petit résumé",
+        content: "Le contenu complet",
         category: { id: 1 },
       });
+      expect(response.body.id).toBeDefined();
+    });
 
-    expect(response.status).toBe(200);
-  });
+    // ----- Post should fail -----
+    it("should return 400 if a creation field (title) is missing", async () => {
+      const incompleteArticle = {
+        subtitle: "Un petit sous-titre",
+        summary: "Un petit résumé",
+        content: "Le contenu complet",
+      };
 
-  // ----- Patch should fail -----
-  it("should return 404 when trying to update a non-existing article", async () => {
-    vi_actions.findOne.mockResolvedValue(null);
+      const response = await request(app)
+        .post("/articles")
+        .send(incompleteArticle);
 
-    const response = await request(app)
-      .patch("/articles/999")
-      .send({
-        id: 999,
-        title: "Nouveau Titre",
-        subtitle: "Sous-titre inchangé",
-        summary: "Résumé inchangé",
-        content: "Contenu inchangé",
-        category: { id: 1 },
+      expect(response.status).toBe(400);
+      expect(response.body).toHaveProperty("message");
+    });
+
+    // ----- Patch should success -----
+    it("should return 200 when updating an existing article", async () => {
+      const response = await request(app)
+        .patch(`/articles/${firstArticleId}`)
+        .send({
+          subtitle: "Ils veulent dominer le monde entier",
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body).toMatchObject({
+        id: firstArticleId,
+        title: "Les chats",
+        subtitle: "Ils veulent dominer le monde entier",
+        summary: "C'est un article sur les chats",
+        content:
+          "L'objectif secret des chats est de dominer les humains et la domination de la terre",
+      });
+    });
+
+    // ----- Delete should success -----
+    it("it should return a 204 when deleting an article but keep it in archive for us (Soft Delete)", async () => {
+      const response = await request(app).delete(
+        `/articles/${secondArticleId}`,
+      );
+
+      expect(response.status).toBe(204);
+
+      const article = await AppDataSource.getRepository("Article").findOne({
+        where: { id: secondArticleId },
+        withDeleted: true,
       });
 
-    expect(response.status).toBe(404);
-  });
+      // The article should still exist in the database, but be marked as deleted with a deletion date
+      expect(article).not.toBeNull();
 
-  // ----- Delete should Success -----
-  it("should return 204 when deleting an article successfully", async () => {
-    vi_actions.findOne.mockResolvedValue({
-      id: 1,
-      title: "Article à supprimer",
+      const deletionDate = article?.deleted_at;
+
+      expect(deletionDate).toBeDefined();
+
+      expect(new Date(deletionDate)).toBeInstanceOf(Date);
     });
-
-    const repo = AppDataSource.getRepository(Article);
-    vi.mocked(repo.update).mockResolvedValueOnce({
-      affected: 1,
-      raw: [],
-      generatedMaps: [],
-    });
-
-    const response = await request(app).delete("/articles/1");
-
-    expect(response.status).toBe(204);
-  });
-  // ----- Delete Should fail -----
-  it("should return 404 when trying to delete a non-existing article", async () => {
-    vi_actions.findOne.mockResolvedValue(null);
-
-    const repo = AppDataSource.getRepository(Article);
-    vi.mocked(repo.update).mockResolvedValueOnce({
-      affected: 0,
-      raw: [],
-      generatedMaps: [],
-    });
-
-    const response = await request(app).delete("/articles/999");
-
-    expect(response.status).toBe(404);
-    expect(response.body).toHaveProperty("error", "Article not found.");
   });
 });

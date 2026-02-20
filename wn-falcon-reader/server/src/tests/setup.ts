@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import { beforeEach, afterAll } from "vitest";
 import { Pool } from "pg";
-import path from "path/win32";
+import path from "node:path";
 
 dotenv.config({ path: path.resolve(process.cwd(), "../../.env.test") });
 

@@ -1,8 +1,9 @@
 import { beforeAll, beforeEach, afterAll } from "vitest";
 import { Pool } from "pg";
 import dotenv from "dotenv";
+import path from "node:path";
 
-dotenv.config();
+dotenv.config({ path: path.resolve(process.cwd(), "../../.env.test") });
 
 process.env.DB_NAME = "wn_db_test";
 
