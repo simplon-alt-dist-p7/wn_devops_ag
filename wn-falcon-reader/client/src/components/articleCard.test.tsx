@@ -4,7 +4,8 @@ import { BrowserRouter } from "react-router-dom";
 import { describe, it, expect } from "vitest";
 import ArticleCard from "./articleCard";
 
-describe.skip("ArticleCard Component", () => {
+// Using a mock here is simpler and faster than calling the real API
+describe("ArticleCard Component", () => {
   const mockArticle = {
     id: 1,
     title: "Titre de l'article",
@@ -19,7 +20,7 @@ describe.skip("ArticleCard Component", () => {
   };
 
   // ----- Required element test -----
-  it("affiche le titre, sous-titre et la catégorie présents sur la carte", () => {
+  it("Displays all required elements on the article card", () => {
     render(
       <BrowserRouter>
         <ArticleCard article={mockArticle} />
@@ -34,7 +35,7 @@ describe.skip("ArticleCard Component", () => {
   });
 
   // ----- Link test -----
-  it("contient un lien correct vers le détail de l'article", () => {
+  it("Creates a link to the article detail page", () => {
     render(
       <BrowserRouter>
         <ArticleCard article={mockArticle} />
@@ -46,7 +47,7 @@ describe.skip("ArticleCard Component", () => {
   });
 
   // ----- Date formatting test -----
-  it("affiche la date formatée correctement en français", () => {
+  it("Displays the formatted date correctly", () => {
     render(
       <BrowserRouter>
         <ArticleCard article={mockArticle} />

@@ -2,34 +2,11 @@ import "@testing-library/jest-dom";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import ArticleForm from "./articleForm";
+import type { Article } from "../types/article";
 
-// We mock the article service to avoid making real API calls during tests
-vi.mock("../services/article", () => ({
-  createArticle: vi.fn(),
-  updateArticle: vi.fn(),
-}));
-
-// We also mock the toast notifications to prevent actual UI popups during tests
-vi.mock("react-hot-toast", () => ({
-  default: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
-}));
-
-// We mock the category service to provide predefined categories for the form
-vi.mock("../services/category", () => ({
-  getCategories: vi.fn(() =>
-    Promise.resolve([
-      { id: 1, name: "Technologie" },
-      { id: 2, name: "Sport" },
-    ]),
-  ),
-}));
-
-describe.skip("ArticleForm", () => {
+describe("ArticleForm", () => {
   // ----- required element test -----
-  it("Affiche les messages d'erreur de validation lorsque les champs sont vides", async () => {
+  it("Displays error messages when form is submitted without required fields", async () => {
     render(<ArticleForm />);
 
     const submitButton = screen.getByRole("button", { name: /enregistrer/i });
@@ -44,7 +21,7 @@ describe.skip("ArticleForm", () => {
   });
 
   // ----- field interaction test -----
-  it("Met à jour l'état du formulaire lorsque l'utilisateur saisit des données", async () => {
+  it("Updates form state when user enters data", async () => {
     render(<ArticleForm />);
 
     const titleInput = screen.getByPlaceholderText(/Titre de l’article/i);
@@ -86,8 +63,18 @@ describe.skip("ArticleForm", () => {
   });
 
   // ----- article submission test -----
-  it("Soumet le formulaire de création d'un article correctement", async () => {
-    const { createArticle } = await import("../services/article");
+  it("Submits the article form correctly", async () => {
+    const articleService = await import("../services/article");
+    const createArticleMock = vi
+      .spyOn(articleService, "createArticle")
+      .mockResolvedValue({
+        id: 1,
+        title: "Titre",
+        subtitle: "Sous-titre",
+        summary: "Intro",
+        content: "Contenu",
+        category: { id: 1 },
+      } as Article);
     render(<ArticleForm />);
 
     await waitFor(() => {
@@ -114,7 +101,7 @@ describe.skip("ArticleForm", () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(createArticle).toHaveBeenCalledWith(
+      expect(createArticleMock).toHaveBeenCalledWith(
         expect.objectContaining({
           title: "Titre",
           subtitle: "Sous-titre",
@@ -124,5 +111,6 @@ describe.skip("ArticleForm", () => {
         }),
       );
     });
+    createArticleMock.mockRestore();
   });
 });
