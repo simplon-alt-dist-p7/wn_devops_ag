@@ -8,7 +8,8 @@
     "prepare": "husky",
     "start:all": "concurrently -n \"READER,WRITER\" -c \"blue,magenta\" \"npm run dev --prefix wn-falcon-reader\" \"npm run dev --prefix wn-falcon-writer\"",
     "test:all": "npm run test --prefix wn-falcon-reader/server && npm run test --prefix wn-falcon-reader/client && npm run test --prefix wn-falcon-writer/server && npm run test --prefix wn-falcon-writer/client",
-    "lint:all": "npm run lint --prefix wn-falcon-reader/server && npm run lint --prefix wn-falcon-reader/client && npm run lint --prefix wn-falcon-writer/server && npm run lint --prefix wn-falcon-writer/client"
+    "lint:all": "npm run lint --prefix wn-falcon-reader/server && npm run lint --prefix wn-falcon-reader/client && npm run lint --prefix wn-falcon-writer/server && npm run lint --prefix wn-falcon-writer/client",
+    "ci:test": "start-server-and-test 'npm run dev --prefix wn-falcon-writer/server' http://localhost:3002 'npm run test:all'"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
@@ -22,6 +23,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "prettier": "^3.8.1",
+    "start-server-and-test": "^2.1.5",
     "typescript-eslint": "^8.56.0"
   },
   "lint-staged": {
