@@ -1,9 +1,9 @@
 name: CI World News
 on:
   push:
-    branches: [main]
+    branches: [main, preprod]
   pull_request:
-    branches: [main]
+    branches: [main, preprod]
 jobs:
   quality-check:
     runs-on: ubuntu-latest
