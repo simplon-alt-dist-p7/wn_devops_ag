@@ -1,4 +1,7 @@
-
+/* --------------------------------------------------
+------------- MOCKS POUR LA BDD PROD -------------
+-------------------------------------------------- */ 
+\c wn_db;
 INSERT INTO
     writer.t_articles (title, subtitle, published_at, summary, content, id_category)
 VALUES

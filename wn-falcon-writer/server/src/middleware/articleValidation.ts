@@ -7,12 +7,12 @@ const articleSchema = Joi.object({
   summary: Joi.string().max(1000).required(),
   content: Joi.string().max(10000).required(),
   category: Joi.object({
-  id: Joi.number().integer().positive().required(),
-  }).required()
+    id: Joi.number().integer().positive().required(),
+  }).required(),
 });
 
 const patchArticleSchema = articleSchema.fork(
-  ["title", "subtitle", "summary", "content"],
+  ["title", "subtitle", "summary", "content", "category"],
   (schema) => schema.optional(),
 );
 

@@ -1,0 +1,1 @@
+CREATE DATABASE wn_db_test;
