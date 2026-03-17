@@ -118,6 +118,13 @@ Located in the wn-falcon-reader/client directory
 
     Run inside wn-falcon-reader/client folder : npx stryker run
 
+## 🛡️ Quality Gate (Git Hooks)
+
+To ensure code quality before it even reaches the repository, we use **Husky**:
+
+- **Pre-commit**: Runs ESLint to prevent styling errors and code smells.
+- **Pre-push**: Runs Unit & Integration tests to ensure no regressions are pushed.
+
 ## ☑️​ Continuous Integration (CI) & Workflow
 
 This project leverages GitHub Actions to ensure code stability and reliability. Every push or pull request targeting the **main** branch triggers an automated verification pipeline:
