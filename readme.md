@@ -92,7 +92,7 @@ Located in the server/ directories of each micro-app.
 
     Scope: Validates API endpoints, database interactions (TypeORM), and business logic (Article for writer and Comment for reader).
 
-    Run inside server folders : npm test
+    Run inside server folders : npm test (the app must be running)
 
 ### Frontend Unit Tests - Vitest & React Testing Library
 
@@ -103,7 +103,7 @@ Located in the client/ directories.
     For writer : client/src/components/articleForm
     For reader : client/src/components/articleCard
 
-    Run inside client folders : npm test
+    Run inside client folders : npm test (the app must be running)
 
 ## 🚀 Continuous Integration (CI) & Workflow
 

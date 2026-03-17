@@ -1,4 +1,4 @@
-import { beforeAll, beforeEach, afterAll } from "vitest";
+import { beforeEach, afterAll } from "vitest";
 import { Pool } from "pg";
 import dotenv from "dotenv";
 import path from "node:path";
