@@ -17,14 +17,15 @@ const pool = new Pool({
 
 beforeEach(async () => {
   await pool.query(`
+    BEGIN;
     TRUNCATE 
+      reader.t_comments, 
       reader.t_article_favorite,
-      reader.t_comments,
-      writer.t_articles
+      writer.t_articles 
     RESTART IDENTITY CASCADE;
+    REFRESH MATERIALIZED VIEW reader.mv_articles;
+    COMMIT;
   `);
-
-  await pool.query("REFRESH MATERIALIZED VIEW reader.mv_articles;");
 });
 
 afterAll(async () => {
