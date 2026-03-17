@@ -104,3 +104,23 @@ Located in the client/ directories.
     For reader : client/src/components/articleCard
 
     Run inside client folders : npm test
+
+## 🚀 Continuous Integration (CI) & Workflow
+
+This project leverages GitHub Actions to ensure code stability and reliability. Every push or pull request targeting the **main** branch triggers an automated verification pipeline:
+
+    Quality Control: Runs the Linter to enforce coding standards and maintain style consistency.
+
+    Unit and Integration Testing (Vitest): The infrastructure automatically boots the backend and waits for it to be ready using start-server-and-test before running component and API tests. This ensures the frontend and backend communicate correctly without relying on mocks.
+
+    E2E Testing (Playwright): Full validation of user journeys within a real headless browser.
+
+### 🛡️ Protected Branches
+
+The **main** branch is protected to maintain high software quality:
+
+    No direct pushes: All changes must be submitted via a Pull Request.
+
+    Status Checks: Pull Requests can only be merged if all CI checks pass successfully.
+
+    Stability: This prevents regressions or major bugs from being deployed to testing or production environments.
