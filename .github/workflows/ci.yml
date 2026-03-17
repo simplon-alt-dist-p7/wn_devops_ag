@@ -40,9 +40,7 @@ jobs:
           npm install --prefix wn-falcon-writer/client
 
       - name: Initialize Database Schema
-        run: |
-          docker exec -i $(docker ps -qf name=postgres) psql -U postgres -d wn_db < ./init-db/1_create_db_test.sql
-          docker exec -i $(docker ps -qf name=postgres) psql -U postgres -d wn_db < ./init-db/2_init_db.sql
+        run: docker exec -i $(docker ps -qf name=postgres) psql -U postgres -d wn_db < ./init-db/2_init_db.sql
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
@@ -56,7 +54,7 @@ jobs:
           DB_PORT: 5432
           DB_USER: postgres
           DB_PASSWORD: arno123
-          DB_NAME: wn_db_test
+          DB_NAME: wn_db
           READER_BACK_PORT: 3001
           WRITER_BACK_PORT: 3002
         run: npm run ci:test
