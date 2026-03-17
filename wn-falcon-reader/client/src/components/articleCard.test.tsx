@@ -56,4 +56,26 @@ describe("ArticleCard Component", () => {
 
     expect(screen.getByText(/1 janvier 2024/i)).toBeInTheDocument();
   });
+
+  // ----- Comment count test -----
+  const commentCases = [
+    { count: 5, expected: "5" },
+    { count: 0, expected: "0" },
+    { count: undefined, expected: "?" },
+  ];
+
+  it.each(commentCases)(
+    "Should display $expected when comment count is $count",
+    ({ count, expected }) => {
+      const articleWithCustomCount = { ...mockArticle, comment_count: count };
+
+      render(
+        <BrowserRouter>
+          <ArticleCard article={articleWithCustomCount} />
+        </BrowserRouter>,
+      );
+
+      expect(screen.getByText(expected)).toBeInTheDocument();
+    },
+  );
 });

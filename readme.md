@@ -92,7 +92,7 @@ Located in the server/ directories of each micro-app.
 
     Scope: Validates API endpoints, database interactions (TypeORM), and business logic (Article for writer and Comment for reader).
 
-    Run inside server folders : npm test
+    Run inside server folders : npm test (the app must be running)
 
 ### Frontend Unit Tests - Vitest & React Testing Library
 
@@ -103,9 +103,22 @@ Located in the client/ directories.
     For writer : client/src/components/articleForm
     For reader : client/src/components/articleCard
 
-    Run inside client folders : npm test
+    Run inside client folders : npm test (the app must be running)
 
-## 🚀 Continuous Integration (CI) & Workflow
+### Mutation Testing (Stryker)
+
+To ensure the robustness of our test suite, we use **Stryker Mutator**. Unlike traditional "Code Coverage" which only shows if a line is executed, Mutation Testing verifies if our tests are actually capable of detecting logical bugs.
+
+Located in the wn-falcon-reader/client directory
+
+    Stryker injects "Mutants" (intentional logical errors) into the source code.
+
+    - If a test fails: the mutant is **killed** (This is good! ✅).
+    - If the tests still pass: the mutant **survived** (This means a test case is missing ❌).
+
+    Run inside wn-falcon-reader/client folder : npx stryker run
+
+## ☑️​ Continuous Integration (CI) & Workflow
 
 This project leverages GitHub Actions to ensure code stability and reliability. Every push or pull request targeting the **main** branch triggers an automated verification pipeline:
 

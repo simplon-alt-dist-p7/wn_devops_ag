@@ -7,7 +7,7 @@ export interface Article {
   summary: string;
   content: string;
   published_at: string;
-  comment_count: number;
+  comment_count?: number;
   comments: Comment[];
   category_name?: string;
   is_favorite: boolean;

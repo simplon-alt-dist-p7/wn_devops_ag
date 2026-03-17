@@ -114,3 +114,28 @@ describe("ArticleForm", () => {
     createArticleMock.mockRestore();
   });
 });
+
+// ----- Article characters limit test -----
+it.each([
+  { field: "Titre", inputValue: 301, limit: 300 },
+  { field: "Sous-titre", inputValue: 500, limit: 300 },
+  { field: "Chapeau", inputValue: 1158, limit: 1000 },
+  { field: "Contenu", inputValue: 65789, limit: 10000 },
+])(
+  "Return error message if $field exceeds $limit characters (sent $inputValue characters)",
+  async ({ field, inputValue, limit }) => {
+    render(<ArticleForm />);
+
+    const input = screen.getByLabelText(field);
+
+    const textTooLong = "a".repeat(inputValue);
+
+    fireEvent.change(input, { target: { value: textTooLong } });
+
+    fireEvent.click(screen.getByRole("button", { name: /enregistrer/i }));
+
+    expect(
+      await screen.findByText(`Max ${limit} caractères`),
+    ).toBeInTheDocument();
+  },
+);
