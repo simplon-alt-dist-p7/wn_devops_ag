@@ -1,7 +1,8 @@
 /* --------------------------------------------------
---------- INITIALISATION DE LA BDD PROD ----------
+--------- INITIALISATION DE LA BDD TEST ----------
 -------------------------------------------------- */
-\c wn_db;
+\c wn_db_test;
+
 CREATE SCHEMA IF NOT EXISTS writer;
 CREATE SCHEMA IF NOT EXISTS reader;
 
