@@ -5,14 +5,14 @@ import path from "node:path";
 
 dotenv.config({ path: path.resolve(process.cwd(), "../../.env.test") });
 
-process.env.DB_NAME = "wn_db_test";
+process.env.DB_NAME = process.env.DB_NAME || "wn_db_test";
 
 const pool = new Pool({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
-  database: "wn_db_test",
+  database: process.env.DB_NAME,
 });
 
 beforeEach(async () => {
