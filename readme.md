@@ -6,36 +6,108 @@ This project represents the individual technical validation phase. The objective
 
 The application is divided into 5 autonomous services, each isolated within its own Docker container:
 
-    db: PostgreSQL 15 database (hosting reader and writer schemas).
+    Database: PostgreSQL 15 database (hosting reader and writer schemas).
 
-    writer-back: Content Management API (Writer Microservice).
+    Writer-back: Content Management API (Writer Microservice).
 
-    writer-front: Editorial Dashboard (Writer Microfrontend).
+    Writer-front: Editorial Dashboard (Writer Microfrontend).
 
-    reader-back: High-performance Consultation API (Reader Microservice).
+    Reader-back: High-performance Consultation API (Reader Microservice).
 
-    reader-front: Public News Portal (Reader Microfrontend).
+    Reader-front: Public News Portal (Reader Microfrontend).
+
+## 🗃️ Monorepo Structure
+
+```
+world-news/
+├── .github/workflows/    # CI/CD (GitHub Actions)
+├── .husky/               # Git hooks (pre-commit linting & pre-push testing)
+├── init-db/              # SQL initialization scripts
+├── tests/                # Playwright E2E test suite
+├── wn-falcon-reader/     # Reader Micro-app
+│   ├── client/           # Frontend (React + Vitest + Stryker)
+│   └── server/           # Backend (Express + Supertest)
+├── wn-falcon-writer/     # Writer Micro-app
+│   ├── client/           # Frontend (React + Vitest)
+│   └── server/           # Backend (Express + Supertest)
+├── docker-compose.yml    # Infrastructure orchestrator
+└── playwright.config.ts  # E2E test configuration
+```
+
+## 🚀 Deployment
+
+The project is managed as a monorepo and is deployed on Render across 5 distinct services.
+
+### Service mapping
+
+To deploy each micro-app, the Root Directory must be specified in the Render settings to ensure the build system points to the correct sub-folder.
+
+|   Service    |                 URL                  | Service type |     Root Directory      |
+| :----------: | :----------------------------------: | :----------: | :---------------------: |
+|   Database   |                                      |   Postgres   |    /init-db (Manual)    |
+| Writer-back  | https://wn-writer-back.onrender.com  | Web Service  | wn-falcon-writer/server |
+| Writer-front | https://wn-front-writer.onrender.com | Static Site  | wn-falcon-writer/client |
+| Reader-back  | https://wn-reader-back.onrender.com  | Web Service  | wn-falcon-reader/server |
+| Reader-front | https://wn-front-reader.onrender.com | Static Site  | wn-falcon-reader/client |
 
 ## 🚀 Quick Start (Docker Compose)
 
 The project strictly adheres to the single-command launch requirement. The entire environment (database, APIs, and Frontends) initializes automatically.
-You need to have Docker Desktop installed.
+You need to have Docker Desktop installed and running.
+
+### 🔐 Environment Variables (.env)
+
+The project uses a centralized .env system for local development and specific overrides for production.
+
+For Docker Compose to work, you must create at the root of the project :
+
+```
+.env
+```
+
+```
+.env.test
+```
+
+You also required a .env in the **wn-falcon-reader/client** and **wn-falcon-writer/client** for the API url (WIP to centralize).
+
+See the _.env.example_ to know which environnment variable you need.
 
 ### From the monorepo root
+
+For the first build :
 
 ```
 docker compose up --build
 ```
 
-### Service Access:
+To launch the container after first build
 
-    Reader Portal (Front): http://localhost:8081
+```
+docker compose up
+```
 
-    Writer Dashboard (Front): http://localhost:8080
+To stop the container
 
-    Writer API: http://localhost:3002
+```
+docker compose down
+```
 
-    Reader API: http://localhost:3001
+To delete the container
+
+```
+docker compose down --v
+```
+
+### Local Service Access:
+
+    Reader-front: http://localhost:8081
+
+    Writer-front: http://localhost:8080
+
+    Writer-back: http://localhost:3002
+
+    Reader-back: http://localhost:3001
 
 ## 🛠️ Implementation Details
 
@@ -57,25 +129,9 @@ The docker-compose.yml file centralizes the infrastructure. It manages:
 
     Resilience: Implementation of restart: always for continuous uptime.
 
-## 🗃️ Monorepo Structure
-
-```
-world-news/
-├── docker-compose.yml    # Infrastructure orchestrator
-├── playwright.config.ts  # E2E test configuration
-├── tests/                # Playwright E2E test suite
-├── init-db/              # SQL initialization scripts
-├── wn-falcon-reader/     # Reader Micro-app
-│   ├── client/           # Frontend (React + Vitest)
-│   └── server/           # Backend (Express + Supertest)
-└── wn-falcon-writer/     # Writer Micro-app
-    ├── client/           # Frontend (React + Vitest)
-    └── server/           # Backend (Express + Supertest)
-```
-
 ## 🧪 Tests
 
-The project implements somes tests to ensure reliability across all layers :
+The project implements several tests to ensure reliability across all layers :
 
 ### End-to-End (E2E) - Playwright
 

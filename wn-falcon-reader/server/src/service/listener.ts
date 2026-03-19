@@ -1,5 +1,6 @@
 import { Client } from "pg";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 export async function startListener() {
@@ -9,6 +10,8 @@ export async function startListener() {
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
     port: Number(process.env.DB_PORT),
+    ssl:
+      process.env.NODE_ENV === "prod" ? { rejectUnauthorized: false } : false,
   });
 
   await client.connect();

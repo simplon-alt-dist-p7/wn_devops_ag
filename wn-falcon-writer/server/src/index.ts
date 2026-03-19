@@ -10,7 +10,8 @@ async function start() {
 
     console.info("✅ Database connected with TypeORM.");
 
-    const port = Number(process.env.WRITER_BACK_PORT);
+    const port =
+      Number(process.env.WRITER_BACK_PORT) || Number(process.env.PORT);
 
     app.listen(port, () => {
       console.info(`🚀 Server is running on port ${port}`);

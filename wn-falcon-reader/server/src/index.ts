@@ -4,7 +4,7 @@ import { startListener } from "./service/listener.js";
 import { checkDatabases } from "./checkDatabase.js";
 import app from "./app.js";
 
-const port = Number(process.env.READER_BACK_PORT);
+const port = Number(process.env.READER_BACK_PORT) || Number(process.env.PORT);
 
 async function start() {
   try {

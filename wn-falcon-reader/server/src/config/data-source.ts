@@ -40,4 +40,5 @@ export const AppDataSource = new DataSource({
 
   synchronize: false,
   logging: false,
+  ssl: process.env.NODE_ENV === "prod" ? { rejectUnauthorized: false } : false,
 });
