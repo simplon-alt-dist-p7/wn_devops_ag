@@ -16,7 +16,7 @@ The application is divided into 5 autonomous services, each isolated within its 
 
     Reader-front: Public News Portal (Reader Microfrontend).
 
-## 🗃️ Monorepo Structure
+## 📂 Monorepo Structure
 
 ```
 world-news/
@@ -34,7 +34,7 @@ world-news/
 └── playwright.config.ts  # E2E test configuration
 ```
 
-## 🚀 Deployment
+## ☁️ Deployment
 
 The project is managed as a monorepo and is deployed on Render across 5 distinct services.
 
@@ -50,12 +50,14 @@ To deploy each micro-app, the Root Directory must be specified in the Render set
 | Reader-back  | https://wn-reader-back.onrender.com  | Web Service  | wn-falcon-reader/server |
 | Reader-front | https://wn-front-reader.onrender.com | Static Site  | wn-falcon-reader/client |
 
+> **Note**: Since the project is deployed on Render's Free Plan, services may spin down after periods of inactivity. Please wait a moment for the initial "cold start" during the first access.
+
 ## 🚀 Quick Start (Docker Compose)
 
 The project strictly adheres to the single-command launch requirement. The entire environment (database, APIs, and Frontends) initializes automatically.
 You need to have Docker Desktop installed and running.
 
-### 🔐 Environment Variables (.env)
+### Environment Variables (.env)
 
 The project uses a centralized .env system for local development and specific overrides for production.
 
@@ -69,34 +71,36 @@ For Docker Compose to work, you must create at the root of the project :
 .env.test
 ```
 
-You also required a .env in the **wn-falcon-reader/client** and **wn-falcon-writer/client** for the API url (WIP to centralize).
+You also required a _.env_ in the **wn-falcon-reader/client** and **wn-falcon-writer/client** for the API URL (WIP to centralize).
 
 See the _.env.example_ to know which environnment variable you need.
 
-### From the monorepo root
+### Docker Start Commands
 
-For the first build :
+Ensure you are in the root folder of the monorepo before running these commands.
+
+First time or after modifying a Dockerfile / package.json :
 
 ```
 docker compose up --build
 ```
 
-To launch the container after first build
+Quick launch when no code dependencies have changed :
 
 ```
 docker compose up
 ```
 
-To stop the container
+To stops and removes containers :
 
 ```
 docker compose down
 ```
 
-To delete the container
+To Removes containers and volumes (wipes the DB) :
 
 ```
-docker compose down --v
+docker compose down -v
 ```
 
 ### Local Service Access:
@@ -111,7 +115,7 @@ docker compose down --v
 
 ## 🛠️ Implementation Details
 
-### 1. Containerization (Dockerfiles)
+### Containerization (Dockerfiles)
 
 Each service features an optimized, standalone Dockerfile:
 
@@ -119,7 +123,7 @@ Each service features an optimized, standalone Dockerfile:
 
     Frontends: Multi-stage builds (Node compilation followed by Nginx serving) for production-grade performance.
 
-### 2. Orchestration & Networking
+### Orchestration & Networking
 
 The docker-compose.yml file centralizes the infrastructure. It manages:
 
@@ -174,7 +178,7 @@ Located in the wn-falcon-reader/client directory
 
     Run inside wn-falcon-reader/client folder : npx stryker run
 
-## 🛡️ Quality Gate (Git Hooks)
+## 🪝 Quality Gate (Git Hooks)
 
 To ensure code quality before it even reaches the repository, we use **Husky**:
 
@@ -191,7 +195,9 @@ This project leverages GitHub Actions to ensure code stability and reliability. 
 
     E2E Testing (Playwright): Full validation of user journeys within a real headless browser.
 
-### 🛡️ Protected Branches
+## 🛡️ Github Settings
+
+### Protected Branches
 
 The **main** branch is protected to maintain high software quality:
 
@@ -199,4 +205,12 @@ The **main** branch is protected to maintain high software quality:
 
     Status Checks: Pull Requests can only be merged if all CI checks pass successfully.
 
-    Stability: This prevents regressions or major bugs from being deployed to testing or production environments.
+This prevents regressions or major bugs from being deployed to testing or production environments.
+
+### Webhooks
+
+To ensure continuous deployment, 4 Webhooks have been configured on GitHub (one for each micro-app).
+
+    Any push or merge on the main branch automatically triggers a new build and deployment on Render for the entire ecosystem.
+
+> **Note**: All hooks use `Content-Type: application/json` to communicate with the Render API.
