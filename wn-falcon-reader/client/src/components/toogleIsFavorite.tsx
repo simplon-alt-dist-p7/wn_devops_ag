@@ -1,11 +1,15 @@
 import { useState } from "react";
+import { API_URL } from "../config/api";
 
 interface ToggleFavoriteProps {
   articleId: number;
   initialIsFavorite: boolean;
 }
 
-export default function ToggleFavorite({ articleId, initialIsFavorite }: ToggleFavoriteProps) {
+export default function ToggleFavorite({
+  articleId,
+  initialIsFavorite,
+}: ToggleFavoriteProps) {
   const [isFavorite, setIsFavorite] = useState(initialIsFavorite);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -18,7 +22,7 @@ export default function ToggleFavorite({ articleId, initialIsFavorite }: ToggleF
 
     try {
       const method = isFavorite ? "DELETE" : "POST";
-      const response = await fetch(`http://localhost:3001/favorite/${articleId}`, {
+      const response = await fetch(`${API_URL}/favorite/${articleId}`, {
         method: method,
       });
 
