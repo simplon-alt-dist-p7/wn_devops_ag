@@ -12,9 +12,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: arno123
-          POSTGRES_DB: wn_db
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
         ports:
           - 5432:5432
         options: >-
@@ -40,7 +40,9 @@ jobs:
           npm install --prefix wn-falcon-writer/client
 
       - name: Initialize Database Schema
-        run: docker exec -i $(docker ps -qf name=postgres) psql -U postgres -d wn_db < ./init-db/2_init_db.sql
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+        run: psql -h localhost -U ${{ secrets.DB_USER }} -d ${{ secrets.DB_NAME }} -f ./init-db/2_init_db.sql
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
@@ -50,24 +52,24 @@ jobs:
 
       - name: Run unit & integration tests (Vitest)
         env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_USER: postgres
-          DB_PASSWORD: arno123
-          DB_NAME: wn_db
-          READER_BACK_PORT: 3001
-          WRITER_BACK_PORT: 3002
+          DB_HOST: ${{ vars.DB_HOST }}
+          DB_PORT: ${{ vars.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          READER_BACK_PORT: ${{ vars.READER_BACK_PORT }}
+          WRITER_BACK_PORT: ${{ vars.WRITER_BACK_PORT }}
         run: npm run ci:test
 
       - name: Run E2E tests (Playwright)
         env:
-          DB_HOST: localhost
-          DB_PORT: 5432
-          DB_USER: postgres
-          DB_PASSWORD: arno123
-          DB_NAME: wn_db
-          READER_BACK_PORT: 3001
-          WRITER_BACK_PORT: 3002
-          READER_FRONT_PORT: 8081
-          WRITER_FRONT_PORT: 8080
+          DB_HOST: ${{ vars.DB_HOST }}
+          DB_PORT: ${{ vars.DB_PORT }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          READER_BACK_PORT: ${{ vars.READER_BACK_PORT }}
+          WRITER_BACK_PORT: ${{ vars.WRITER_BACK_PORT }}
+          READER_FRONT_PORT: ${{ vars.READER_FRONT_PORT }}
+          WRITER_FRONT_PORT: ${{ vars.WRITER_FRONT_PORT }}
         run: npx playwright test

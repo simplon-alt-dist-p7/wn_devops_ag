@@ -214,3 +214,11 @@ To ensure continuous deployment, 4 Webhooks have been configured on GitHub (one 
     Any push or merge on the main branch automatically triggers a new build and deployment on Render for the entire ecosystem.
 
 > **Note**: All hooks use `Content-Type: application/json` to communicate with the Render API.
+
+### Secret Management (CI/CD)
+
+To ensure maximum security and environment independence, no sensitive data is stored in the source code. These values are encrypted by GitHub and injected only when the CI pipeline runs:
+
+    GitHub Secrets: Authentication credentials (DB passwords, user, names).
+
+    GitHub Variables: Non-sensitive configuration (Ports, Hosts...).
