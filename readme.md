@@ -1,3 +1,5 @@
+#### **Edit** : Initially deployed using Render's managed PostgreSQL, the database has been migrated to Supabase because of Render free tier plan. I switched to Transaction Pooling (port 6543) to force an IPv4 connection, as Supabase's default IPv6 was not routable from Render's infrastructure.
+
 # 🌍 World News - Microservices & Microfrontends Orchestration
 
 This project represents the individual technical validation phase. The objective is to assemble, containerize, and automate a complete architecture consisting of two distinct micro-apps: Reader and Writer.
